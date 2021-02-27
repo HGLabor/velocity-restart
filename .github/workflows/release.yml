@@ -30,7 +30,7 @@ jobs:
       - run: chmod +x gradlew
       - name: Build jar
         run: ./gradlew build --no-daemon
-      - name: Find built JAR file
+      - name: Find built jar
         id: find_jar
         run: |
           output="$(find build/libs/ -name "*.jar" -type f -printf "%f\n")"
@@ -41,6 +41,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ needs.release.outputs.upload_url }}
-          asset_path: build/libs/${{ steps.findjar.outputs.jarname }}
+          asset_path: build/libs/${{ steps.find_jar.outputs.jarname }}
           asset_name: hglabor-restart.jar
           asset_content_type: application/java-archive
