@@ -15,7 +15,7 @@ import java.time.temporal.ChronoField;
 import java.time.temporal.ChronoUnit;
 import java.util.concurrent.TimeUnit;
 
-@Plugin(id = "hglabor_restart", name = "HGLabor proxy restart", version = "0.1.0")
+@Plugin(id = "hglabor_restart", name = "HGLabor proxy restart", version = "0.1.1")
 public final class RestartPlugin {
     @Inject
     public RestartPlugin(final ProxyServer server, final @DataDirectory Path dataDir) throws IOException {
