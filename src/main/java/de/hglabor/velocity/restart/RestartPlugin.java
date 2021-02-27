@@ -18,7 +18,7 @@ import java.time.temporal.ChronoField;
 import java.time.temporal.ChronoUnit;
 import java.util.concurrent.TimeUnit;
 
-@Plugin(id = "hglabor_restart", name = "HGLabor proxy restart", version = "0.1.1")
+@Plugin(id = "hglabor_restart", name = "HGLabor proxy restart", version = "0.1.2")
 public final class RestartPlugin {
     private final ProxyServer server;
     private final int hour;
