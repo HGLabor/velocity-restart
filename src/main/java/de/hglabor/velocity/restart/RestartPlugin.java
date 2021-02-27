@@ -13,7 +13,6 @@ import java.time.LocalDateTime;
 import java.time.Period;
 import java.time.temporal.ChronoField;
 import java.time.temporal.ChronoUnit;
-import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 @Plugin(id = "hglabor_restart", name = "HGLabor proxy restart", version = "0.1.0")
@@ -36,8 +35,9 @@ public final class RestartPlugin {
             (temp.get(ChronoField.HOUR_OF_DAY) > hour ? temp.plus(Period.ofDays(1)) : temp)
                 .with(ChronoField.HOUR_OF_DAY, hour)
         );
-        Executors.newSingleThreadScheduledExecutor().schedule(() -> {
-            server.shutdown(Component.text("Periodic restart"));
-        }, LocalDateTime.now().until(nextRestart, ChronoUnit.MILLIS), TimeUnit.MILLISECONDS);
+        server
+            .getScheduler()
+            .buildTask(this, () -> server.shutdown(Component.text("Periodic restart")))
+            .delay(LocalDateTime.now().until(nextRestart, ChronoUnit.MILLIS), TimeUnit.MILLISECONDS);
     }
 }
