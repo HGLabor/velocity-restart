@@ -38,6 +38,7 @@ public final class RestartPlugin {
         server
             .getScheduler()
             .buildTask(this, () -> server.shutdown(Component.text("Periodic restart")))
-            .delay(LocalDateTime.now().until(nextRestart, ChronoUnit.MILLIS), TimeUnit.MILLISECONDS);
+            .delay(LocalDateTime.now().until(nextRestart, ChronoUnit.MILLIS), TimeUnit.MILLISECONDS)
+            .schedule();
     }
 }
