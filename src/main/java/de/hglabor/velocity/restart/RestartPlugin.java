@@ -24,7 +24,7 @@ public final class RestartPlugin {
     private final int hour;
 
     @Inject
-    public RestartPlugin(ProxyServer server, @DataDirectory Path dataDir) throws IOException {
+    public RestartPlugin(final ProxyServer server, final @DataDirectory Path dataDir) throws IOException {
         this.server = server;
 
         Files.createDirectories(dataDir);
@@ -42,7 +42,7 @@ public final class RestartPlugin {
     }
 
     @Subscribe
-    public void onProxyInitialization(ProxyInitializeEvent event) {
+    public void onProxyInitialization(final ProxyInitializeEvent event) {
         final var nextRestart = LocalDateTime.now().with((temp) ->
             (temp.get(ChronoField.HOUR_OF_DAY) > hour ? temp.plus(Period.ofDays(1)) : temp)
                 .with(ChronoField.HOUR_OF_DAY, hour)
