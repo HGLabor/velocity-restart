@@ -13,15 +13,14 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDateTime;
-import java.time.Period;
-import java.time.temporal.ChronoField;
+import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
 import java.util.concurrent.TimeUnit;
 
 @Plugin(id = "hglabor_restart", name = "HGLabor proxy restart", version = "0.1.2")
 public final class RestartPlugin {
     private final ProxyServer server;
-    private final int hour;
+    private final int hourOfDay;
 
     @Inject
     public RestartPlugin(final ProxyServer server, final @DataDirectory Path dataDir) throws IOException {
@@ -33,7 +32,7 @@ public final class RestartPlugin {
             .setPath(dataDir.resolve("config.hocon"))
             .build();
         final var root = loader.load();
-        hour = root.getNode("hour").act(node -> {
+        hourOfDay = root.getNode("hourOfDay").act(node -> {
             if (node.isVirtual()) {
                 node.setValue(3);
             }
@@ -43,14 +42,18 @@ public final class RestartPlugin {
 
     @Subscribe
     public void onProxyInitialization(final ProxyInitializeEvent event) {
-        final var nextRestart = LocalDateTime.now().with((temp) ->
-            (temp.get(ChronoField.HOUR_OF_DAY) > hour ? temp.plus(Period.ofDays(1)) : temp)
-                .with(ChronoField.HOUR_OF_DAY, hour)
-        );
         server
             .getScheduler()
             .buildTask(this, () -> server.shutdown(Component.text("Periodic restart")))
-            .delay(LocalDateTime.now().until(nextRestart, ChronoUnit.MILLIS), TimeUnit.MILLISECONDS)
+            .delay(LocalDateTime.now().until(nextHour(LocalDateTime.now(), hourOfDay), ChronoUnit.MILLIS), TimeUnit.MILLISECONDS)
             .schedule();
+    }
+
+    static LocalDateTime nextHour(final LocalDateTime now, final int hour) {
+        var next = now.with(LocalTime.of(hour, 0));
+        if (now.compareTo(next) >= 0) {
+            next = next.plusDays(1);
+        }
+        return next;
     }
 }
