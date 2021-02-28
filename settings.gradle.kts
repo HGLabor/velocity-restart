@@ -1,2 +1,1 @@
-rootProject.name = "velocity-restart"
-
+rootProject.name = "hglabor-velocity-restart"

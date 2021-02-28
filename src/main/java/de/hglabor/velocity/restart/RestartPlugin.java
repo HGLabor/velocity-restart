@@ -17,7 +17,7 @@ import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
 import java.util.concurrent.TimeUnit;
 
-@Plugin(id = "hglabor_restart", name = "HGLabor proxy restart", version = "0.2.0")
+@Plugin(id = "hglabor_restart", name = "HGLabor proxy restart", version = "0.3.0")
 public final class RestartPlugin {
     private final ProxyServer server;
     private final int hourOfDay;
@@ -42,10 +42,15 @@ public final class RestartPlugin {
 
     @Subscribe
     public void onProxyInitialization(final ProxyInitializeEvent event) {
+        final var now = LocalDateTime.now();
         server
             .getScheduler()
             .buildTask(this, () -> server.shutdown(Component.text("Periodic restart")))
-            .delay(LocalDateTime.now().until(nextHour(LocalDateTime.now(), hourOfDay), ChronoUnit.MILLIS), TimeUnit.MILLISECONDS)
+            .delay(
+                // Make sure the delay is never negative
+                Math.max(now.until(nextHour(now, hourOfDay), ChronoUnit.MILLIS), 0),
+                TimeUnit.MILLISECONDS
+            )
             .schedule();
     }
 
